@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0e14" />
+    <meta
+      name="description"
+      content="VAPTFlow — Automated Web Security Testing & VAPT Management. Discover endpoints, run security tests, verify findings manually and produce client-ready VAPT reports."
+    />
+    <title>VAPTFlow — Automated Web Security Testing &amp; VAPT Management</title>
+
+    <!--
+      Applies the persisted theme before first paint so there is no flash of the
+      wrong colour scheme. Keep this synchronous and inline.
+      Default is dark; 'system' is the only mode that defers to the OS.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('vaptflow:theme')
+          var dark =
+            stored === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+              : stored !== 'light'
+          document.documentElement.classList.toggle('dark', dark)
+        } catch (error) {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
