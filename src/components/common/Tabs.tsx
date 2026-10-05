@@ -21,9 +21,16 @@ export interface TabsProps {
   className?: string
   /** Renders a count chip, e.g. the number of open findings on a tab. */
   showCounts?: boolean
+  /**
+   * Wires the tabs to panels rendered elsewhere. When set, each tab is given
+   * `id={`${idPrefix}-tab-${item.id}`}` and `aria-controls={`${idPrefix}-panel-${item.id}`}`,
+   * so a panel can point back at its tab with `aria-labelledby`. Omit it when the
+   * tablist has no associated panels.
+   */
+  idPrefix?: string
 }
 
-export function Tabs({ items, value, onChange, className, showCounts = true }: TabsProps) {
+export function Tabs({ items, value, onChange, className, showCounts = true, idPrefix }: TabsProps) {
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const index = items.findIndex((item) => item.id === value)
     if (index === -1) return
@@ -55,6 +62,8 @@ export function Tabs({ items, value, onChange, className, showCounts = true }: T
             type="button"
             aria-selected={active}
             tabIndex={active ? 0 : -1}
+            id={idPrefix ? `${idPrefix}-tab-${item.id}` : undefined}
+            aria-controls={idPrefix ? `${idPrefix}-panel-${item.id}` : undefined}
             onClick={() => onChange(item.id)}
             className={cn(
               'relative flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm font-medium',
@@ -70,7 +79,7 @@ export function Tabs({ items, value, onChange, className, showCounts = true }: T
               <span
                 className={cn(
                   'rounded px-1.5 py-0.5 text-[11px] font-semibold tabular-nums',
-                  active ? 'bg-accent-soft text-accent' : 'bg-surface-2 text-fg-muted',
+                  active ? 'bg-accent-soft text-accent-text' : 'bg-surface-2 text-fg-muted',
                 )}
               >
                 {item.count}
@@ -138,7 +147,7 @@ export function TabNav({
               <span
                 className={cn(
                   'rounded px-1.5 py-0.5 text-[11px] font-semibold tabular-nums',
-                  active ? 'bg-accent-soft text-accent' : 'bg-surface-2 text-fg-muted',
+                  active ? 'bg-accent-soft text-accent-text' : 'bg-surface-2 text-fg-muted',
                 )}
               >
                 {item.count}

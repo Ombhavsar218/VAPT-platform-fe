@@ -86,9 +86,9 @@ export function Topbar({ onOpenNav, runningScans = 0 }: TopbarProps) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search findings, targets, projects"
             className={cn(
-              'h-9 w-full rounded-md border border-border-base bg-surface-2 pl-9 pr-14 text-sm text-fg',
+              'h-9 w-full rounded-md border border-control-border bg-surface-2 pl-9 pr-14 text-sm text-fg',
               'placeholder:text-fg-subtle transition-colors duration-150',
-              'hover:border-border-strong focus:border-accent-border focus:bg-surface-3 focus:outline-none focus:ring-2 focus:ring-accent/30',
+              'hover:border-border-strong focus:border-accent focus:bg-surface-3',
               '[&::-webkit-search-cancel-button]:appearance-none',
             )}
           />
@@ -104,7 +104,7 @@ export function Topbar({ onOpenNav, runningScans = 0 }: TopbarProps) {
             to={listFilterHref('/scans', { status: 'running' })}
             className={cn(
               'hidden items-center gap-2 rounded-md border border-accent-border bg-accent-soft px-2.5 py-1.5',
-              'text-xs font-medium text-accent transition-colors hover:bg-accent/20 sm:inline-flex',
+              'text-xs font-medium text-accent-text transition-colors hover:bg-accent/20 sm:inline-flex',
             )}
           >
             <Radar className="size-3.5" aria-hidden="true" />
@@ -145,7 +145,7 @@ export function Topbar({ onOpenNav, runningScans = 0 }: TopbarProps) {
               aria-expanded={open}
               className="ml-0.5 flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-surface-2"
             >
-              <span className="flex size-7 items-center justify-center rounded-md bg-accent-soft text-[11px] font-semibold text-accent">
+              <span className="flex size-7 items-center justify-center rounded-md bg-accent-soft text-[11px] font-semibold text-accent-text">
                 {initials(user?.name ?? 'Guest User')}
               </span>
               <span className="hidden text-left lg:block">

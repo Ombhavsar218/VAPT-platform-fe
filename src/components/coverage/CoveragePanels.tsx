@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Layers3, Radar, ShieldAlert, Sparkles } from 'lucide-react'
 
 import { Card, CardHeader } from '@/components/common/Card'
@@ -7,6 +8,7 @@ import { ProgressBar } from '@/components/common/ProgressBar'
 import { Select } from '@/components/common/Form'
 import type { CoverageAggregates, CoverageRow, ModuleCoverageRow } from '@/services/coverage'
 import { formatNumber, formatPercent, formatRelativeTime } from '@/utils/format'
+import { listFilterHref } from '@/utils/listQuery'
 
 /**
  * Coverage view.
@@ -17,13 +19,7 @@ import { formatNumber, formatPercent, formatRelativeTime } from '@/utils/format'
  * category can sit at 0% with plenty of tests behind it, and the only honest way
  * to show that is side by side rather than collapsed into one score.
  */
-export function CoverageMatrix({
-  matrix,
-  onSelectCategory,
-}: {
-  matrix: CoverageRow[]
-  onSelectCategory?: (row: CoverageRow) => void
-}) {
+export function CoverageMatrix({ matrix }: { matrix: CoverageRow[] }) {
   return (
     <Card flush>
       <div className="border-b border-border-base px-5 py-4">
@@ -36,11 +32,16 @@ export function CoverageMatrix({
       <ul className="divide-y divide-border-base">
         {matrix.map((row) => (
           <li key={row.owaspId}>
-            <button
-              type="button"
-              onClick={() => onSelectCategory?.(row)}
-              disabled={!onSelectCategory}
-              className="w-full px-5 py-3 text-left transition-colors enabled:hover:bg-surface-2"
+            {/*
+             * A link, not a button. `<a>` has a transparent content model, so the
+             * <dl>, <p> and progress bar below are valid inside it, whereas a
+             * <button> may only contain phrasing content. The row is real
+             * navigation to the filtered register, so the anchor is also the
+             * honest element here.
+             */}
+            <Link
+              to={listFilterHref('/findings', { owasp: row.owaspId })}
+              className="block px-5 py-3 transition-colors hover:bg-surface-2"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <span className="flex min-w-0 items-baseline gap-2">
@@ -71,7 +72,7 @@ export function CoverageMatrix({
                 />
                 <Figure label="Findings" value={formatNumber(row.findings)} />
               </dl>
-            </button>
+            </Link>
           </li>
         ))}
       </ul>
@@ -150,13 +151,19 @@ export function ModuleCoverageTable({ modules }: { modules: ModuleCoverageRow[] 
           const open = expanded === module.id
           return (
             <li key={module.id}>
-              <button
-                type="button"
-                onClick={() => setExpanded(open ? null : module.id)}
-                aria-expanded={open}
-                className="w-full px-5 py-3 text-left transition-colors hover:bg-surface-2"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              {/*
+               * The button holds only phrasing content, as `<button>` requires.
+               * The surrounding div carries the hover surface, and the button's
+               * ::after overlay keeps the entire row clickable without nesting
+               * block elements inside the control.
+               */}
+              <div className="relative px-5 py-3 transition-colors hover:bg-surface-2">
+                <button
+                  type="button"
+                  onClick={() => setExpanded(open ? null : module.id)}
+                  aria-expanded={open}
+                  className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-left after:absolute after:inset-0 after:content-['']"
+                >
                   <span className="flex min-w-0 flex-wrap items-center gap-2">
                     <span className="truncate text-[13px] font-medium text-fg">{module.name}</span>
                     <ModuleStatusBadge status={module.status} size="xs" />
@@ -165,7 +172,7 @@ export function ModuleCoverageTable({ modules }: { modules: ModuleCoverageRow[] 
                   <span className="text-[13px] tabular-nums text-fg-muted">
                     {formatNumber(module.findings)} findings
                   </span>
-                </div>
+                </button>
 
                 <p className="mt-0.5 text-[11px] text-fg-subtle">
                   {formatNumber(module.testCount)} tests · {module.owaspCategories.join(', ')}
@@ -186,7 +193,7 @@ export function ModuleCoverageTable({ modules }: { modules: ModuleCoverageRow[] 
                     <Figure label="Runs" value={formatNumber(module.runCount)} />
                   </dl>
                 ) : null}
-              </button>
+              </div>
             </li>
           )
         })}

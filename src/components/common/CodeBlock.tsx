@@ -26,7 +26,7 @@ interface Segment {
 }
 
 const TONE_CLASSES: Record<Tone, string> = {
-  method: 'text-accent font-semibold',
+  method: 'text-accent-text font-semibold',
   target: 'text-fg font-medium',
   version: 'text-fg-subtle',
   status: 'text-warning font-semibold',

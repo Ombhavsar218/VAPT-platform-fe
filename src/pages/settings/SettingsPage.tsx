@@ -233,7 +233,7 @@ function AppearanceSection() {
                 className={
                   'inline-flex items-center gap-2 rounded-badge border px-3 py-2 text-[13px] font-medium transition-colors ' +
                   (selected
-                    ? 'border-accent bg-accent/10 text-accent'
+                    ? 'border-accent bg-accent/10 text-accent-text'
                     : 'border-border-base bg-surface text-fg-muted hover:border-border-strong')
                 }
               >

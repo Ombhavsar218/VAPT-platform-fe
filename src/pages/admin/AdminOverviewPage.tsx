@@ -219,7 +219,7 @@ export function AdminOverviewPage() {
             actions={
               <Link
                 to="/admin/audit-logs"
-                className="text-[13px] font-medium text-accent hover:underline"
+                className="text-[13px] font-medium text-accent-text hover:underline"
               >
                 View all
               </Link>

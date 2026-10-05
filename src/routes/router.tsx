@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
 import { AppLayout } from '@/components/layout/AppLayout'
 import { AdminJobsPage } from '@/pages/admin/AdminJobsPage'
@@ -8,6 +8,7 @@ import { AdminOverviewPage } from '@/pages/admin/AdminOverviewPage'
 import { AdminAuditLogsPage } from '@/pages/admin/AdminAuditLogsPage'
 import { AdminUsersPage } from '@/pages/admin/AdminUsersPage'
 import { LoginPage } from '@/pages/auth/LoginPage'
+import { LandingPage } from '@/pages/landing/LandingPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { CoveragePage } from '@/pages/coverage/CoveragePage'
@@ -35,7 +36,12 @@ import { ADMIN_ROLES } from '@/utils/roles'
 /**
  * Application route table.
  *
- * Ordering matters in two places:
+ * Ordering matters in three places:
+ *  - `/` is the public landing page, declared as a top-level route rather than an
+ *    index route inside the guarded branch. Giving both a path and an index a
+ *    claim on `/` would leave React Router ranking two matches, so the landing
+ *    page is the only route at that path; it forwards signed-in visitors to the
+ *    dashboard itself.
  *  - `/scans/compare` must be declared before `/scans/:id`, otherwise
  *    "compare" is captured as a scan id.
  *  - `/admin/users` etc. must precede the `/admin` layout's own index route.
@@ -43,6 +49,12 @@ import { ADMIN_ROLES } from '@/utils/roles'
  * Each branch carries an `errorElement` so a failure stays contained.
  */
 export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LandingPage />,
+    errorElement: <RouteError />,
+  },
+
   {
     path: '/login',
     element: <LoginPage />,
@@ -57,8 +69,6 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         errorElement: <RouteError />,
         children: [
-          { index: true, element: <Navigate to="/dashboard" replace /> },
-
           { path: 'dashboard', element: <DashboardPage /> },
 
           { path: 'projects', element: <ProjectsPage /> },

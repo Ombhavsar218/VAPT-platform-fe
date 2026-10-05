@@ -72,7 +72,7 @@ function NavItems({
                         <Icon
                           className={cn(
                             'size-4 shrink-0 transition-colors',
-                            isActive ? 'text-accent' : 'text-fg-subtle group-hover:text-fg-muted',
+                            isActive ? 'text-accent-text' : 'text-fg-subtle group-hover:text-fg-muted',
                           )}
                         />
                         <span className={cn('truncate', collapsed && 'lg:hidden')}>{item.label}</span>
@@ -133,7 +133,7 @@ export function Sidebar({ variant = 'desktop', onNavigate, onClose }: SidebarPro
           >
             <LogoMark />
             <span className="text-[15px] font-semibold tracking-tight text-fg">
-              VAPT<span className="text-accent">Flow</span>
+              VAPT<span className="text-accent-text">Flow</span>
             </span>
           </NavLink>
         )}

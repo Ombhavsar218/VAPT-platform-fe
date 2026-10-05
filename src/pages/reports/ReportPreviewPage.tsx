@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Download, RefreshCcw } from 'lucide-react'
+import { ArrowLeft, Download, FileSpreadsheet, RefreshCcw } from 'lucide-react'
 
 import { Button } from '@/components/common/Button'
 import { Card, CardHeader } from '@/components/common/Card'
@@ -17,9 +17,12 @@ import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/useToast'
 import { queryKeys } from '@/services/queryKeys'
 import { reportService, type ReportDetailData } from '@/services/reports'
+import { reportFindingsCsv } from '@/services/reportExport'
 import { SEVERITIES } from '@/types'
 import { SEVERITY_META } from '@/utils/severity'
 import { formatDateTime, formatNumber } from '@/utils/format'
+import { downloadTextFile, slugify } from '@/utils/csv'
+import { cn } from '@/utils/cn'
 
 /**
  * Report preview (`/reports/:reportId`).
@@ -43,21 +46,25 @@ export function ReportPreviewPage() {
     enabled: reportId !== '',
   })
 
-  const download = useMutation({
-    mutationFn: () => {
-      if (!user) throw new Error('Sign in to download a report.')
-      return reportService.download(reportId, user.id)
+  // Records the hand-off in the audit log. The artefact itself is produced by
+  // the browser (print dialog or a CSV file), so this mutation only attests that
+  // an export happened - it is deliberately not the thing that produces a file.
+  const recordExport = useMutation({
+    mutationFn: async (artifact: string) => {
+      if (!user) throw new Error('Sign in to export a report.')
+      const result = await reportService.download(reportId, user.id)
+      return { ...result, artifact }
     },
-    onSuccess: (result) => {
+    onSuccess: ({ format, version, artifact }) => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.reports.root })
       toast.success(
-        'Download recorded',
-        `${result.format.toUpperCase()} · version ${result.version} handed to the client.`,
+        'Export recorded',
+        `${artifact} · ${format.toUpperCase()} deliverable, version ${version}.`,
       )
     },
     onError: (mutationError) => {
       toast.error(
-        'Could not download the report',
+        'Could not export the report',
         mutationError instanceof Error ? mutationError.message : 'Unknown error.',
       )
     },
@@ -83,12 +90,34 @@ export function ReportPreviewPage() {
             onRetry={() => void refetch()}
           />
         </Card>
-        <Link to="/reports" className="inline-flex items-center gap-1.5 text-[13px] text-accent hover:underline">
+        <Link to="/reports" className="inline-flex items-center gap-1.5 text-[13px] text-accent-text hover:underline">
           <ArrowLeft className="size-3.5" aria-hidden="true" />
           Back to reports
         </Link>
       </div>
     )
+  }
+
+  const handlePrint = () => {
+    window.print()
+    recordExport.mutate('PDF')
+  }
+
+  const handleCsv = () => {
+    try {
+      const stamp = new Date().toISOString().slice(0, 10)
+      downloadTextFile(
+        `${slugify(data.report.name)}-${data.report.format}-v${data.report.version}-${stamp}.csv`,
+        reportFindingsCsv(data),
+        'text/csv;charset=utf-8',
+      )
+      recordExport.mutate('CSV')
+    } catch (exportError) {
+      toast.error(
+        'Could not export the findings register',
+        exportError instanceof Error ? exportError.message : 'Unknown error.',
+      )
+    }
   }
 
   return (
@@ -102,17 +131,28 @@ export function ReportPreviewPage() {
               variant="secondary"
               leadingIcon={<RefreshCcw className="size-4" />}
               onClick={() => setRegenerating(true)}
+              className="print:hidden"
             >
               Regenerate
             </Button>
             <Button
+              variant="secondary"
+              leadingIcon={<FileSpreadsheet className="size-4" />}
+              loading={recordExport.isPending && recordExport.variables === 'CSV'}
+              disabled={!data.downloadable}
+              onClick={handleCsv}
+              className="print:hidden"
+            >
+              Export CSV
+            </Button>
+            <Button
               variant="primary"
               leadingIcon={<Download className="size-4" />}
-              loading={download.isPending}
+              loading={recordExport.isPending && recordExport.variables === 'PDF'}
               disabled={!data.downloadable}
-              onClick={() => download.mutate()}
+              onClick={handlePrint}
             >
-              Download
+              Download PDF
             </Button>
           </>
         }
@@ -123,6 +163,7 @@ export function ReportPreviewPage() {
       <Tabs
         value={tab}
         onChange={setTab}
+        className="print:hidden"
         items={[
           { id: 'summary', label: 'Summary' },
           { id: 'findings', label: 'Findings', count: data.summary.totalFindings },
@@ -131,13 +172,26 @@ export function ReportPreviewPage() {
         ]}
       />
 
-      {tab === 'summary' ? <SummaryTab detail={data} /> : null}
+      {/*
+        Every section stays mounted and only the inactive ones are hidden on
+        screen. Printing therefore produces the whole document instead of
+        whichever tab happened to be open, which is the point of a deliverable.
+      */}
+      <div className={cn('space-y-3', tab !== 'summary' && 'hidden print:block')}>
+        <SummaryTab detail={data} />
+      </div>
 
-      {tab === 'findings' ? <FindingsTab detail={data} /> : null}
+      <div className={cn('space-y-4', tab !== 'findings' && 'hidden print:block')}>
+        <FindingsTab detail={data} />
+      </div>
 
-      {tab === 'methodology' ? <MethodologyTab detail={data} /> : null}
+      <div className={cn('space-y-3', tab !== 'methodology' && 'hidden print:block')}>
+        <MethodologyTab detail={data} />
+      </div>
 
-      {tab === 'activity' ? <ActivityTab detail={data} /> : null}
+      <div className={cn('space-y-3', tab !== 'activity' && 'hidden print:block')}>
+        <ActivityTab detail={data} />
+      </div>
 
       <GenerateReportModal
         open={regenerating}
@@ -190,15 +244,11 @@ function SummaryTab({ detail }: { detail: ReportDetailData }) {
 }
 
 function FindingsTab({ detail }: { detail: ReportDetailData }) {
+  // The severity buttons narrow the screen view only. Every group stays mounted and
+  // non-matching ones are hidden with a `print:block` override, because filtering the
+  // rendered set would print a document whose own cover page and severity breakdown
+  // still quote the severities it omitted.
   const [severityFilter, setSeverityFilter] = useState<string>('all')
-
-  const groups = useMemo(
-    () =>
-      severityFilter === 'all'
-        ? detail.groups
-        : detail.groups.filter((group) => group.severity === severityFilter),
-    [detail.groups, severityFilter],
-  )
 
   if (detail.groups.length === 0) {
     return (
@@ -213,7 +263,7 @@ function FindingsTab({ detail }: { detail: ReportDetailData }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 print:hidden">
         <button
           type="button"
           onClick={() => setSeverityFilter('all')}
@@ -221,7 +271,7 @@ function FindingsTab({ detail }: { detail: ReportDetailData }) {
           className={
             'rounded-badge border px-2 py-1 text-[12px] font-medium transition-colors ' +
             (severityFilter === 'all'
-              ? 'border-accent bg-accent/12 text-accent'
+              ? 'border-accent bg-accent/12 text-accent-text'
               : 'border-border-base bg-surface text-fg-muted hover:border-border-strong')
           }
         >
@@ -245,20 +295,34 @@ function FindingsTab({ detail }: { detail: ReportDetailData }) {
         ))}
       </div>
 
-      {groups.map((group) => (
-        <section key={group.severity} className="space-y-2">
-          <h2 className="text-[11px] font-semibold tracking-[0.14em] text-fg-subtle uppercase">
-            {SEVERITY_META[group.severity].label} · {formatNumber(group.count)}
-          </h2>
-          {group.findings.map((section) => (
-            <ReportSectionCard key={section.findingId} section={section} />
-          ))}
-        </section>
-      ))}
+      {detail.groups.map((group) => {
+        const onFilter =
+          severityFilter === 'all' || severityFilter === group.severity
+
+        return (
+          <section
+            key={group.severity}
+            className={cn('space-y-2', !onFilter && 'hidden print:block')}
+          >
+            <h2 className="text-[11px] font-semibold tracking-[0.14em] text-fg-subtle uppercase">
+              {SEVERITY_META[group.severity].label} · {formatNumber(group.count)}
+            </h2>
+            {group.findings.map((section) => (
+              <ReportSectionCard key={section.findingId} section={section} />
+            ))}
+          </section>
+        )
+      })}
 
       {SEVERITIES.filter((severity) => !detail.groups.some((group) => group.severity === severity)).map(
         (severity) => (
-          <p key={severity} className="text-[12px] text-fg-subtle">
+          <p
+            key={severity}
+            className={cn(
+              'text-[12px] text-fg-subtle',
+              severityFilter !== 'all' && severityFilter !== severity && 'hidden print:block',
+            )}
+          >
             No {SEVERITY_META[severity].label.toLowerCase()} findings in this scope.
           </p>
         ),

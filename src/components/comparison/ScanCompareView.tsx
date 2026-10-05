@@ -298,7 +298,7 @@ function MovementList({
                   <SeverityBadge severity={finding.severity} size="xs" />
                   <Link
                     to={`/findings/${finding.findingId}`}
-                    className="truncate text-[13px] font-medium text-fg hover:text-accent hover:underline"
+                    className="truncate text-[13px] font-medium text-fg hover:text-accent-text hover:underline"
                   >
                     {finding.title}
                   </Link>

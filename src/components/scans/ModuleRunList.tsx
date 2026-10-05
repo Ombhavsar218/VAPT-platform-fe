@@ -44,7 +44,7 @@ export function ModuleRunList({
                 {run.state === 'done' ? (
                   <Check className="size-3.5 shrink-0 text-success" aria-hidden="true" />
                 ) : run.state === 'running' ? (
-                  <Loader2 className="size-3.5 shrink-0 animate-spin text-accent" aria-hidden="true" />
+                  <Loader2 className="size-3.5 shrink-0 animate-spin text-accent-text" aria-hidden="true" />
                 ) : (
                   <MinusCircle className="size-3.5 shrink-0 text-fg-subtle" aria-hidden="true" />
                 )}
@@ -59,7 +59,7 @@ export function ModuleRunList({
               <span
                 className={cn(
                   'block font-medium',
-                  run.state === 'done' ? 'text-success' : run.state === 'running' ? 'text-accent' : 'text-fg-subtle',
+                  run.state === 'done' ? 'text-success' : run.state === 'running' ? 'text-accent-text' : 'text-fg-subtle',
                 )}
               >
                 {STATE_LABEL[run.state]}

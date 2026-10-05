@@ -183,7 +183,7 @@ export function ScansPage() {
         cell: (row) => (
           <span className="text-[13px] text-fg-muted">
             {isScanInFlight(row.status) ? (
-              <span className="inline-flex items-center gap-1.5 text-accent">
+              <span className="inline-flex items-center gap-1.5 text-accent-text">
                 <span className="relative flex size-1.5">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
@@ -223,7 +223,7 @@ export function ScansPage() {
         }
         meta={
           liveCount > 0 ? (
-            <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent">
+            <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent-text">
               <Radar className="size-3.5" aria-hidden="true" />
               {liveCount} run{liveCount === 1 ? '' : 's'} in flight
             </span>
@@ -404,7 +404,7 @@ export function ScansPage() {
             <ShieldX className="mt-0.5 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
             <span>
               Scans can only be started against a target with recorded written authorisation. Add one
-              from the <Link to="/targets" className="text-accent underline-offset-2 hover:underline">targets register</Link>.
+              from the <Link to="/targets" className="text-accent-text underline-offset-2 hover:underline">targets register</Link>.
             </span>
           </p>
         </Card>

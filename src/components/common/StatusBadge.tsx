@@ -185,7 +185,7 @@ export function LivePulse({ className }: { className?: string }) {
         <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
         <span className="relative inline-flex size-2 rounded-full bg-accent" />
       </span>
-      <span className="text-xs font-medium text-accent">Live</span>
+      <span className="text-xs font-medium text-accent-text">Live</span>
     </span>
   )
 }

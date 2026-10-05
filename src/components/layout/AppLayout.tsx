@@ -67,23 +67,27 @@ export function AppLayout({
     <div className="flex min-h-dvh bg-bg">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-fg"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-fg print:hidden"
       >
         Skip to main content
       </a>
 
-      <div className="sticky top-0 hidden h-dvh shrink-0 lg:block">
+      <div className="sticky top-0 hidden h-dvh shrink-0 lg:block print:hidden">
         <Sidebar />
       </div>
 
-      <MobileNav open={open} onClose={closeNav} />
+      <div className="print:hidden">
+        <MobileNav open={open} onClose={closeNav} />
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar onOpenNav={openNav} runningScans={navCounts.runningScans ?? 0} />
+        <div className="print:hidden">
+          <Topbar onOpenNav={openNav} runningScans={navCounts.runningScans ?? 0} />
+        </div>
 
-        <main id="main-content" className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <main id="main-content" className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 print:p-0">
           <div className={cn(contained && 'mx-auto w-full max-w-[1600px]')}>
-            <Breadcrumbs overrides={breadcrumbOverrides} className="mb-4" />
+            <Breadcrumbs overrides={breadcrumbOverrides} className="mb-4 print:hidden" />
             <Outlet />
           </div>
         </main>

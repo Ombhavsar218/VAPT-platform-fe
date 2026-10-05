@@ -10,13 +10,17 @@ import { AlertCircle } from 'lucide-react'
 
 import { cn } from '@/utils/cn'
 
+// Focus is deliberately not handled with an ad-hoc ring: the global
+// :focus-visible outline draws a solid --ring that clears 3:1 against every
+// surface. Suppressing it here and substituting a low-alpha ring was the
+// accessibility regression this replaces.
 const CONTROL_BASE =
-  'w-full rounded-md border border-border-base bg-surface-3 text-fg placeholder:text-fg-subtle ' +
+  'w-full rounded-md border border-control-border bg-surface-3 text-fg placeholder:text-fg-subtle ' +
   'transition-colors duration-150 hover:border-border-strong ' +
-  'focus:border-accent-border focus:outline-none focus:ring-2 focus:ring-accent/35 ' +
+  'focus:border-accent ' +
   'disabled:cursor-not-allowed disabled:opacity-60'
 
-const INVALID = 'border-danger/60 focus:border-danger focus:ring-danger/30'
+const INVALID = 'border-danger focus:border-danger'
 
 export interface FieldProps {
   label: string
@@ -219,9 +223,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         id={inputId}
         type="checkbox"
         className={cn(
-          'mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded border border-border-strong bg-surface-3',
+          'mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded border border-control-border bg-surface-3',
           'transition-colors duration-150 checked:border-accent checked:bg-accent checked:bg-check',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
           'disabled:cursor-not-allowed disabled:opacity-50',
         )}
         {...rest}
@@ -274,7 +277,7 @@ export function Switch({ checked, onChange, label, description, disabled, id }: 
         className={cn(
           'relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition-colors duration-200',
           'disabled:cursor-not-allowed disabled:opacity-50',
-          checked ? 'bg-accent' : 'bg-surface-3 border border-border-strong',
+          checked ? 'bg-accent' : 'bg-surface-3 border border-control-border',
         )}
       >
         <span

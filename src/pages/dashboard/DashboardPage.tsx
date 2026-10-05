@@ -217,7 +217,7 @@ export function DashboardPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
                             to={`/scans/${entry.scan.id}`}
-                            className="truncate text-[13px] font-medium text-fg transition-colors hover:text-accent"
+                            className="truncate text-[13px] font-medium text-fg transition-colors hover:text-accent-text"
                           >
                             {entry.targetName}
                           </Link>
@@ -351,7 +351,7 @@ export function DashboardPage() {
                     <div className="min-w-0 flex-1">
                       <Link
                         to={`/findings/${finding.findingId}`}
-                        className="block truncate text-[13px] text-fg transition-colors hover:text-accent"
+                        className="block truncate text-[13px] text-fg transition-colors hover:text-accent-text"
                       >
                         {truncate(finding.title, 72)}
                       </Link>
@@ -382,7 +382,7 @@ export function DashboardPage() {
                     <div className="min-w-0 flex-1">
                       <Link
                         to={`/scans/${scan.id}`}
-                        className="block truncate text-[13px] text-fg transition-colors hover:text-accent"
+                        className="block truncate text-[13px] text-fg transition-colors hover:text-accent-text"
                       >
                         {targetName}
                       </Link>
@@ -411,7 +411,7 @@ export function DashboardPage() {
           {projectRisk.length > 0 ? (
             <Link
               to={`/projects/${projectRisk[0]?.projectId ?? ''}`}
-              className="font-medium text-fg transition-colors hover:text-accent"
+              className="font-medium text-fg transition-colors hover:text-accent-text"
             >
               {projectRisk[0]?.name} ({projectRisk[0]?.riskScore})
             </Link>

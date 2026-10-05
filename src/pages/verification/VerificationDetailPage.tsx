@@ -196,7 +196,7 @@ export function VerificationDetailPage() {
         <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-fg-subtle">
           <Link
             to={`/findings/${finding.id}`}
-            className="inline-flex items-center gap-1.5 text-accent underline-offset-2 hover:underline"
+            className="inline-flex items-center gap-1.5 text-accent-text underline-offset-2 hover:underline"
           >
             <ShieldAlert className="size-3.5" aria-hidden="true" />
             Open finding {finding.id}
@@ -270,7 +270,7 @@ export function VerificationDetailPage() {
             Changed your mind?{' '}
             <button
               type="button"
-              className="text-accent underline-offset-2 hover:underline"
+              className="text-accent-text underline-offset-2 hover:underline"
               onClick={() => reopen.mutate()}
               disabled={reopen.isPending}
             >

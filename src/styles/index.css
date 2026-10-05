@@ -25,15 +25,23 @@
 
     --fg: #e7eaf0;
     --fg-muted: #99a3b5;
-    --fg-subtle: #6a7488;
+    --fg-subtle: #828da0;
 
-    --accent: #6366f1;
-    --accent-hover: #818cf8;
+    --accent: #5b5ee8;
+    --accent-hover: #4f46e5;
     --accent-fg: #ffffff;
-    --accent-soft: rgb(99 102 241 / 0.16);
-    --accent-border: rgb(99 102 241 / 0.4);
+    --accent-soft: rgb(91 94 232 / 0.16);
+    --accent-border: rgb(91 94 232 / 0.4);
+    /* Distinct from --accent: accent fills carry white text, accent *text*
+     * needs its own contrast against page surfaces. */
+    --accent-text: #a5b4fc;
+    /* Boundary for controls the user must be able to identify (WCAG 1.4.11).
+     * Decorative dividers keep --border, which is intentionally quieter. */
+    /* Form controls use --surface-3 as their own background, so this border is
+     * measured against that, not against --surface. */
+    --control-border: #606f88;
 
-    --sev-critical: #f43f5e;
+    --sev-critical: #f55873;
     --sev-high: #f97316;
     --sev-medium: #f59e0b;
     --sev-low: #38bdf8;
@@ -45,7 +53,7 @@
     --status-info: #60a5fa;
     --status-neutral: #94a3b8;
 
-    --ring: rgb(99 102 241 / 0.55);
+    --ring: #a5b4fc;
     --overlay: rgb(3 5 9 / 0.72);
     --shadow-overlay: 0 24px 48px -12px rgb(0 0 0 / 0.6);
   }
@@ -67,27 +75,29 @@
 
     --fg: #101623;
     --fg-muted: #55607a;
-    --fg-subtle: #7b8698;
+    --fg-subtle: #5b6577;
 
     --accent: #4f46e5;
     --accent-hover: #4338ca;
     --accent-fg: #ffffff;
     --accent-soft: rgb(79 70 229 / 0.08);
     --accent-border: rgb(79 70 229 / 0.28);
+    --accent-text: #4338ca;
+    --control-border: #7d8798;
 
-    --sev-critical: #e11d48;
-    --sev-high: #ea580c;
-    --sev-medium: #d97706;
-    --sev-low: #0284c7;
-    --sev-info: #64748b;
+    --sev-critical: #be123c;
+    --sev-high: #b03b0b;
+    --sev-medium: #95520a;
+    --sev-low: #03689f;
+    --sev-info: #526070;
 
-    --status-success: #059669;
-    --status-warning: #b45309;
-    --status-danger: #dc2626;
-    --status-info: #2563eb;
-    --status-neutral: #64748b;
+    --status-success: #047857;
+    --status-warning: #98540a;
+    --status-danger: #b91c1c;
+    --status-info: #1d4ed8;
+    --status-neutral: #526070;
 
-    --ring: rgb(79 70 229 / 0.4);
+    --ring: #4338ca;
     --overlay: rgb(15 20 30 / 0.4);
     --shadow-overlay: 0 24px 48px -12px rgb(15 23 42 / 0.25);
   }
@@ -97,7 +107,10 @@
  * Expose the semantic palette as Tailwind utilities.
  * `inline` keeps the var() reference intact so `.dark` overrides cascade.
  *
- *   bg-surface / text-fg / border-border / text-accent / text-sev-critical
+ *   bg-surface / text-fg / border-border / text-accent-text / text-sev-critical
+ *
+ * `--accent` fills carry white text via `text-accent-fg`. Accent used as *text*
+ * on a page surface uses `--accent-text`, which is contrast-tuned separately.
  * ------------------------------------------------------------------------- */
 @theme inline {
   --color-bg: var(--bg);
@@ -117,6 +130,9 @@
   --color-accent-fg: var(--accent-fg);
   --color-accent-soft: var(--accent-soft);
   --color-accent-border: var(--accent-border);
+  --color-accent-text: var(--accent-text);
+  --color-control-border: var(--control-border);
+  --color-ring: var(--ring);
 
   --color-sev-critical: var(--sev-critical);
   --color-sev-high: var(--sev-high);
@@ -224,11 +240,114 @@
   }
 }
 
+/*
+ * Slow vertical drift for the landing hero mockup. The reduced-motion block at the
+ * end of this file collapses animation duration, so this stops moving rather than
+ * merely speeding up.
+ */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 @layer components {
   /* Report/document surface — a lighter "paper" plane inside dark chrome. */
   .vapt-document {
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Print
+ *
+ * The app is dark by default, and a dark page either wastes ink or - when the
+ * browser drops background graphics - prints white text on white paper. Because
+ * every colour in the UI resolves through the semantic tokens above, remapping
+ * those tokens for print fixes the whole document at once instead of needing a
+ * print variant on every component.
+ * ------------------------------------------------------------------------- */
+@media print {
+  :root,
+  .dark {
+    color-scheme: light;
+
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --surface-3: #ffffff;
+    --border: #d4dae4;
+    --border-strong: #aab3c2;
+
+    --fg: #101623;
+    --fg-muted: #3d4759;
+    --fg-subtle: #4a5468;
+
+    --accent: #4338ca;
+    --accent-hover: #4338ca;
+    --accent-fg: #ffffff;
+    --accent-soft: #f5f5fe;
+    --accent-border: #c7c9f5;
+    --accent-text: #4338ca;
+    --control-border: #7d8798;
+    /* The dark-theme ring is a light lavender and would be invisible on paper. */
+    --ring: #4338ca;
+
+    --sev-critical: #be123c;
+    --sev-high: #b03b0b;
+    --sev-medium: #95520a;
+    --sev-low: #03689f;
+    --sev-info: #526070;
+
+    --status-success: #047857;
+    --status-warning: #98540a;
+    --status-danger: #b91c1c;
+    --status-info: #1d4ed8;
+    --status-neutral: #526070;
+
+    --overlay: transparent;
+    --shadow-overlay: none;
+  }
+
+  html,
+  body {
+    background: #ffffff;
+  }
+
+  /* Trim the page box without clipping content. */
+  @page {
+    margin: 14mm;
+  }
+
+  /*
+   * Keep a finding, card or table row with the heading that introduces it.
+   * `break-inside: avoid` is ignored when a block is taller than a page, which
+   * is the correct outcome for long findings.
+   */
+  article,
+  section,
+  li,
+  tr {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Print the link target where a reader would otherwise lose it. */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    word-break: break-all;
   }
 }
 

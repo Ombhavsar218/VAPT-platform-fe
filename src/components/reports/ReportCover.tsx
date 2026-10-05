@@ -67,7 +67,7 @@ export function ReportCover({ detail }: { detail: ReportDetailData }) {
           {scan ? (
             <Link
               to={`/scans/${scan.id}`}
-              className="mt-1 inline-block text-[12px] text-accent hover:underline"
+              className="mt-1 inline-block text-[12px] text-accent-text hover:underline"
             >
               View run {scan.id}
             </Link>

@@ -90,7 +90,7 @@ function SignInPanel({
         <div className="mb-9 flex items-center gap-2.5">
           <LogoMark className="size-8" />
           <span className="text-lg font-semibold tracking-tight text-fg">
-            VAPT<span className="text-accent">Flow</span>
+            VAPT<span className="text-accent-text">Flow</span>
           </span>
         </div>
 
@@ -128,7 +128,7 @@ function SignInPanel({
                     'In the full platform this sends a reset link to your work email.',
                   )
                 }
-                className="text-xs font-medium text-accent transition-colors hover:text-accent-hover"
+                className="text-xs font-medium text-accent-text transition-colors hover:text-accent-hover"
               >
                 Forgot password?
               </button>
@@ -150,9 +150,8 @@ function SignInPanel({
               checked={remember}
               onChange={(event) => setRemember(event.target.checked)}
               className={cn(
-                'size-4 shrink-0 cursor-pointer appearance-none rounded border border-border-strong bg-surface-3',
+                'size-4 shrink-0 cursor-pointer appearance-none rounded border border-control-border bg-surface-3',
                 'transition-colors duration-150 checked:border-accent checked:bg-accent checked:bg-check',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
               )}
             />
             <span className="text-[13px] text-fg">Keep me signed in for 30 days</span>
@@ -225,10 +224,8 @@ function Field({
         'aria-describedby': error ? `${id}-error` : undefined,
         className: cn(
           'h-9 w-full rounded-md border bg-surface-3 px-3 text-sm text-fg',
-          'transition-colors focus:outline-none focus:ring-2',
-          error
-            ? 'border-danger/60 focus:border-danger focus:ring-danger/25'
-            : 'border-border-base focus:border-accent-border focus:ring-accent/30',
+          'transition-colors',
+          error ? 'border-danger focus:border-danger' : 'border-control-border focus:border-accent',
         ),
       })}
 
@@ -266,7 +263,7 @@ function BrandPanel() {
       />
 
       <div className="relative flex h-full flex-col justify-center px-14 py-16">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-text">
           Vulnerability Assessment &amp; Penetration Testing
         </p>
         <h2 className="mt-4 max-w-md text-3xl font-semibold leading-tight tracking-tight text-fg">

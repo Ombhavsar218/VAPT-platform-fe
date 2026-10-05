@@ -1,4 +1,5 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { Link, type LinkProps } from 'react-router-dom'
 
 import { Spinner } from './Spinner'
 import { cn } from '@/utils/cn'
@@ -32,6 +33,9 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
   iconSm: 'h-8 w-8',
 }
 
+const BASE_CLASSES =
+  'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors duration-150'
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   size?: ButtonSize
@@ -64,8 +68,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-medium',
-        'transition-colors duration-150',
+        BASE_CLASSES,
         'disabled:pointer-events-none disabled:opacity-50',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
@@ -83,3 +86,80 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     </button>
   )
 })
+
+export interface ButtonLinkProps
+  extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'>,
+    Pick<
+      LinkProps,
+      'to' | 'state' | 'replace' | 'target' | 'reloadDocument' | 'preventScrollReset' | 'relative'
+    > {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  leadingIcon?: ReactNode
+  trailingIcon?: ReactNode
+  className?: string
+}
+
+/**
+ * Navigation that looks like a button.
+ *
+ * `<Link>` already renders an `<a>`, so wrapping a `<Button>` (or a bare `<a>`)
+ * inside one produces invalid nested interactive content and breaks keyboard
+ * and screen-reader behaviour. This renders the anchor directly with the shared
+ * button styling instead.
+ */
+export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
+  { variant = 'primary', size = 'md', leadingIcon, trailingIcon, className, children, to, ...rest },
+  ref,
+) {
+  return (
+    <Link
+      ref={ref}
+      to={to}
+      className={cn(BASE_CLASSES, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className)}
+      {...rest}
+    >
+      {leadingIcon}
+      {children}
+      {trailingIcon}
+    </Link>
+  )
+})
+
+export interface ButtonAnchorProps
+  extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  leadingIcon?: ReactNode
+  trailingIcon?: ReactNode
+  className?: string
+}
+
+/**
+ * A same-page link that looks like a button.
+ *
+ * `<Link>` is for router navigation, and it is the wrong element for an in-page
+ * fragment: React Router does not scroll to the hash, so `<Link to="#about">`
+ * updates the URL and leaves the reader where they were. A plain `<a>` keeps the
+ * browser's native fragment handling — which works without JavaScript, moves the
+ * sequential focus starting point, and honours `scroll-margin-top` — so these
+ * hrefs should be written out rather than routed.
+ */
+export const ButtonAnchor = forwardRef<HTMLAnchorElement, ButtonAnchorProps>(
+  function ButtonAnchor(
+    { variant = 'primary', size = 'md', leadingIcon, trailingIcon, className, children, ...rest },
+    ref,
+  ) {
+    return (
+      <a
+        ref={ref}
+        className={cn(BASE_CLASSES, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className)}
+        {...rest}
+      >
+        {leadingIcon}
+        {children}
+        {trailingIcon}
+      </a>
+    )
+  },
+)

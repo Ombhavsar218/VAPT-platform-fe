@@ -93,7 +93,7 @@ export function ReportSectionCard({ section }: { section: ReportSection }) {
                       href={reference.url}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="inline-flex items-center gap-1 text-accent hover:underline"
+                      className="inline-flex items-center gap-1 text-accent-text hover:underline"
                     >
                       {reference.label}
                       <ExternalLink className="size-3" aria-hidden="true" />
@@ -105,7 +105,7 @@ export function ReportSectionCard({ section }: { section: ReportSection }) {
           ) : null}
 
           <p className="border-t border-border-base pt-3 text-[12px]">
-            <Link to={`/findings/${section.findingId}`} className="text-accent hover:underline">
+            <Link to={`/findings/${section.findingId}`} className="text-accent-text hover:underline">
               Open {section.findingId} in the findings register
             </Link>
           </p>

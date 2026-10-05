@@ -46,9 +46,9 @@ export function SearchBar({
         onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value)}
         placeholder={placeholder}
         className={cn(
-          'w-full rounded-md border border-border-base bg-surface-3 text-fg placeholder:text-fg-subtle',
+          'w-full rounded-md border border-control-border bg-surface-3 text-fg placeholder:text-fg-subtle',
           'transition-colors duration-150 hover:border-border-strong',
-          'focus:border-accent-border focus:outline-none focus:ring-2 focus:ring-accent/35',
+          'focus:border-accent',
           '[&::-webkit-search-cancel-button]:appearance-none',
           size === 'sm' ? 'h-8 pl-8.5 pr-8 text-[13px]' : 'h-9 pl-9 pr-9 text-sm',
         )}

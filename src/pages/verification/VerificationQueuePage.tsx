@@ -348,7 +348,7 @@ export function VerificationQueuePage() {
             <span>
               Nothing needs a decision right now. New tasks appear automatically when a scan finds
               something it cannot prove on its own — see{' '}
-              <Link to="/findings" className="text-accent underline-offset-2 hover:underline">
+              <Link to="/findings" className="text-accent-text underline-offset-2 hover:underline">
                 the findings register
               </Link>
               .

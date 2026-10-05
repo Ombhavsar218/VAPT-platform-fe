@@ -50,7 +50,7 @@ export function Logo({
             size === 'lg' ? 'text-xl' : size === 'sm' ? 'text-sm' : 'text-[15px]',
           )}
         >
-          VAPT<span className="text-accent">Flow</span>
+          VAPT<span className="text-accent-text">Flow</span>
         </span>
         {showTagline ? (
           <span className="mt-1 text-[11px] font-normal text-fg-subtle">
@@ -68,7 +68,7 @@ export function LogoLink({ collapsed = false }: { collapsed?: boolean }) {
     <Link
       to="/dashboard"
       aria-label="VAPTFlow dashboard"
-      className="flex items-center gap-2.5 rounded-md outline-none"
+      className="flex items-center gap-2.5 rounded-md"
     >
       <Logo size={collapsed ? 'sm' : 'md'} />
     </Link>

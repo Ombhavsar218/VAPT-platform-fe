@@ -62,6 +62,7 @@ Deliberately minimal — no UI framework, form library, state library or syntax 
 src/
 ├── components/
 │   ├── common/      Design-system primitives (buttons, table, modal, badges, code block…)
+│   ├── landing/     Public-page-only visuals (hero product mockup)
 │   └── layout/      App shell: sidebar, topbar, breadcrumbs, mobile drawer
 ├── data/            Static seed datasets + OWASP/CWE reference data
 ├── hooks/           Theme, auth, toast, media query, overlay behaviour
@@ -117,6 +118,44 @@ badge also renders its text label. Automated *potential* findings are styled dis
 *confirmed* vulnerabilities (dashed outline and radar icon versus solid outline and check), because
 that distinction is central to the product's credibility.
 
+Severity text is measured against its **own** tinted chip (`bg-sev-*/12` over `--surface`), not
+against the flat surface, because that is where it is actually painted. Four severity tokens were
+nudged a shade to clear 4.5:1 there. Likewise `--control-border` is measured against `--surface-3`,
+since form controls use that as their own background.
+
+---
+
+## Landing page
+
+`/` is a public marketing page and the only route outside the authenticated shell. It owns its own
+header and footer rather than borrowing `AppLayout`, because a sidebar and breadcrumb trail are
+navigation for someone who already works here, not for a first-time visitor.
+
+**It is declared as a top-level route, not an index route.** The guarded branch previously held
+`{ index: true }` at `/`. Leaving that in place would give two routes a claim on the same path and
+leave React Router ranking matches, so the landing page is the only route at `/` and it forwards a
+signed-in visitor to `/dashboard` itself.
+
+**Section navigation is native fragment links.** The navbar, the hero's *Read more* button and the
+footer all use plain `<a href="#about">` rather than router `<Link>`. React Router does not scroll to
+a fragment, so a `<Link to="#about">` would change the URL and leave the reader where they were. A
+plain anchor keeps the browser's own fragment handling, which works without JavaScript, moves the
+sequential focus starting point, and honours `scroll-margin-top` — which is why each section carries
+`scroll-mt-20` to clear the sticky header. Smooth scrolling is switched on imperatively for the
+lifetime of the page rather than in the stylesheet, which keeps client-side route changes elsewhere
+in the app from being animated and respects `prefers-reduced-motion`.
+
+**The hero visual is drawn, not photographed.** The project ships no image assets at all, so a
+screenshot would have been the only visual that did not theme itself. `HeroMockup` composes a
+running scan from `SEVERITY_META`, `SCAN_STATUS_META` and `ProgressBar`, which means it cannot drift
+out of step with the palette in either theme. The OWASP strip reads `OWASP_2025_ORDER` directly
+rather than restating the categories.
+
+Two additive props were needed for this and are reusable elsewhere: `Tabs` accepts an optional
+`idPrefix` so a tablist can be wired to panels with `aria-controls`/`aria-labelledby`, and
+`ButtonAnchor` renders a button-styled plain `<a>` for same-page links where a router `Link` would
+be the wrong element.
+
 ---
 
 ## Security posture of this build
@@ -132,6 +171,11 @@ This is a UI project and deliberately contains **no** offensive capability:
 `Authorization confirmed` checkboxes on target creation are a UI acknowledgement only. In a
 production deployment, scope and authorisation must be enforced server-side before any scan runs.
 
+The landing page's copy is written as product narrative and describes scanning, mapping and
+reporting as the product's purpose. None of the capabilities it describes are implemented: every
+figure on the page comes from the seeded demo store. The bullets above describe the build, not the
+marketing copy.
+
 ---
 
 ## Build stages
@@ -144,10 +188,9 @@ production deployment, scope and authorisation must be enforced server-side befo
 | 4 | Findings, finding details, manual verification | Complete |
 | 5 | Reports, report preview, scan comparison, OWASP coverage | Complete |
 | 6 | Scanner modules, settings, administration | Complete |
-| 7 | Responsive polish, a11y, UX refinement | Planned |
+| 7 | Responsive polish, a11y, UX refinement | Complete |
 
-Stages 1 to 6 are wired into the router, sidebar and layout with no placeholder routes left. Only
-the Stage 7 refinement pass remains.
+Stages 1 to 7 are wired into the router, sidebar and layout with no placeholder routes left.
 
 ---
 
@@ -160,9 +203,22 @@ can be filtered by project, target, status and format, with headline aggregates 
 current data. The preview at `/reports/:reportId` composes its cover, executive summary, severity
 breakdown, methodology, scope and activity from live findings on every read, so nothing can drift
 out of sync with the register. Only `confirmed`, `open` and `needs_retest` findings are quoted: an
-unverified `potential` signal has not earned a place in a client deliverable. Rendering is
-simulated — generation resolves to `ready` immediately, and a download is recorded as a
-`report.download` audit entry rather than producing a file.
+unverified `potential` signal has not earned a place in a client deliverable. Generation is
+simulated — it resolves to `ready` immediately — but the export itself is real. **Download PDF**
+opens the browser print dialog against a print stylesheet, and **Export CSV** serialises the same
+findings register the preview renders, so the two can never disagree. Both are recorded as a
+`report.download` audit entry; the audit records the hand-off, it is not what produces the file.
+
+The print stylesheet remaps the semantic colour tokens rather than restyling components one by one.
+The app is dark by default, and a dark page either wastes ink or prints white text on white paper
+once the browser drops background graphics, so every colour token is overridden for print. The tab
+strip is hidden and all four sections are revealed, which means printing produces the whole document
+rather than whichever tab happened to be open.
+
+The same rule governs the findings severity filter: it narrows the screen, not the document. An
+analyst who filters to *Critical* to check one thing and then prints still gets every severity.
+A report whose own cover page and severity breakdown quote a High count that the document does not
+contain is worse than no report at all.
 
 Because the preview recomputes, a target report would silently absorb findings from a later run.
 It is instead flagged **outdated** when a completed scan of the same target finishes more than
@@ -291,5 +347,48 @@ them.
 
 Role and MFA enrolment are deliberately *not* editable here; they live under Administration, so there
 is exactly one place where authority changes.
-#   V A P T - p l a t f o r m - f e  
- 
+
+---
+
+## Accessibility notes
+
+Stage 7 was an audit-and-fix pass, and most of what it changed was in the design tokens rather
+than in individual components. The numbers below were computed against the palette rather than
+estimated.
+
+**Contrast is enforced by token, not by eye.** Every text and UI pairing in both themes clears
+WCAG 2.1 AA. Three token distinctions carry that:
+
+- `--accent` fills carry white text via `text-accent-fg`. Accent used as *text* on a page
+  surface uses `--accent-text`. One token cannot do both jobs: the shade light enough to read
+  as text on a dark surface puts white label text below 4.5:1 once it becomes a button fill.
+- `--control-border` exists separately from `--border`. WCAG 1.4.11 asks for 3:1 only where a
+  boundary is what identifies a control, so form controls get the stronger token while card
+  dividers stay quiet.
+- `--ring` is an opaque colour. It replaced a translucent accent that composited to roughly
+  2:1 against the darkest surfaces, which is below the 3:1 that a focus indicator needs.
+
+`--accent-hover` darkens in both themes. Lightening a dark-mode button on hover is a common
+idiom, but it drops the white label text to under 3:1, so hover now moves in the one direction
+that preserves label contrast.
+
+**Focus is never suppressed.** The global `:focus-visible` rule draws a 2px solid `--ring`
+outline. Several components were overriding it with `focus:outline-none` plus a low-alpha ring,
+which removed a compliant indicator and replaced it with a failing one; those overrides are gone
+rather than tuned. The one case that needed help is the scan wizard's radio cards, where the real
+input is `sr-only` and keyboard focus would otherwise be clipped to a 1px box — the card mirrors
+the focus treatment with `has-[:focus-visible]`.
+
+**No interactive element is nested inside another.** `<Link>` renders an `<a>`, so wrapping a
+`Button` or a bare `<a>` in one produced nested interactive content and broke keyboard
+behaviour. Those sites now use `ButtonLink`, which renders the anchor with the shared button
+styling. `<button>` may only contain phrasing content, so the coverage rollup keeps its summary
+inside the button and reveals the detail list beside it, using a `::after` overlay to keep the
+whole row clickable. The OWASP coverage matrix rows became links instead: they navigate to the
+findings register, so the anchor is the honest element, and an anchor's transparent content model
+legally holds the `<dl>` and `<p>` inside them.
+
+**Verification.** The audit findings were checked against rendered HTML, not just source patterns,
+using a throwaway SSR harness loaded through Vite's module runner. It asserts CSV escaping and
+column integrity against live service data, and scans rendered markup for the nesting violations
+above.

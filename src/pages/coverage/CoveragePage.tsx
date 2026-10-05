@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 
 import { Card } from '@/components/common/Card'
 import { ErrorState } from '@/components/common/ErrorState'
@@ -13,7 +13,6 @@ import {
 } from '@/components/coverage/CoveragePanels'
 import { queryKeys } from '@/services/queryKeys'
 import { coverageService } from '@/services/coverage'
-import { listFilterHref } from '@/utils/listQuery'
 
 /**
  * OWASP and module coverage.
@@ -25,7 +24,6 @@ import { listFilterHref } from '@/utils/listQuery'
  */
 export function CoveragePage() {
   const [params, setParams] = useSearchParams()
-  const navigate = useNavigate()
   const projectId = params.get('project') ?? ''
 
   const { data, isPending, isError, error, refetch } = useQuery({
@@ -84,10 +82,7 @@ export function CoveragePage() {
         <>
           <CoverageOverview aggregates={data.aggregates} scopedToProject={data.scopedToProject} />
 
-          <CoverageMatrix
-            matrix={data.matrix}
-            onSelectCategory={(row) => navigate(listFilterHref('/findings', { owasp: row.owaspId }))}
-          />
+          <CoverageMatrix matrix={data.matrix} />
 
           <ModuleCoverageTable modules={data.modules} />
         </>

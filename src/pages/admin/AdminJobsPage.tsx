@@ -124,7 +124,7 @@ export function AdminJobsPage() {
             <span className="min-w-0">
               <Link
                 to={`/scans/${row.scanId}`}
-                className="font-mono text-[12px] text-accent hover:underline"
+                className="font-mono text-[12px] text-accent-text hover:underline"
               >
                 {row.scanId}
               </Link>
@@ -347,7 +347,7 @@ export function AdminJobsPage() {
         A job that has already finished cannot be cancelled or reassigned: the outcome is on the
         record, and a retry requeues the work rather than erasing the failure. Every action here is
         written to{' '}
-        <Link to={listFilterHref('/admin/audit-logs', { entity: 'job' })} className="text-accent hover:underline">
+        <Link to={listFilterHref('/admin/audit-logs', { entity: 'job' })} className="text-accent-text hover:underline">
           the audit log
         </Link>
         .

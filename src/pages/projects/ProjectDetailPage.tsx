@@ -23,7 +23,7 @@ import { RiskScore } from '@/components/common/RiskScore'
 import { SeverityDonut } from '@/components/charts/SeverityDonut'
 import { AssessmentTypeLabel, EnvironmentBadge, ScanStatusBadge } from '@/components/common/StatusBadge'
 import { Skeleton } from '@/components/common/Skeleton'
-import { Button } from '@/components/common/Button'
+import { Button, ButtonLink } from '@/components/common/Button'
 import { SeverityBadge } from '@/components/common/SeverityBadge'
 import { projectDetailService } from '@/services/dashboard'
 import { queryKeys } from '@/services/queryKeys'
@@ -71,7 +71,7 @@ export function ProjectDetailPage() {
           <div className="min-w-0">
             <Link
               to={`/scans/${scan.id}`}
-              className="font-mono text-[13px] text-fg transition-colors hover:text-accent"
+              className="font-mono text-[13px] text-fg transition-colors hover:text-accent-text"
             >
               {scan.id}
             </Link>
@@ -161,9 +161,9 @@ export function ProjectDetailPage() {
           />
           {notFound ? (
             <div className="flex justify-center pb-6">
-              <Link to="/projects">
-                <Button variant="secondary">Back to projects</Button>
-              </Link>
+              <ButtonLink to="/projects" variant="secondary">
+                Back to projects
+              </ButtonLink>
             </div>
           ) : null}
         </Card>
@@ -195,16 +195,20 @@ export function ProjectDetailPage() {
         }
         actions={
           <>
-            <Link to={listFilterHref('/findings', { project: project.id, open: 'true' })}>
-              <Button variant="secondary" leadingIcon={<Bug className="size-4" />}>
-                Open findings
-              </Button>
-            </Link>
-            <Link to={`/scans/new?project=${project.id}`}>
-              <Button variant="primary" leadingIcon={<Radar className="size-4" />}>
-                New scan
-              </Button>
-            </Link>
+            <ButtonLink
+              to={listFilterHref('/findings', { project: project.id, open: 'true' })}
+              variant="secondary"
+              leadingIcon={<Bug className="size-4" />}
+            >
+              Open findings
+            </ButtonLink>
+            <ButtonLink
+              to={`/scans/new?project=${project.id}`}
+              variant="primary"
+              leadingIcon={<Radar className="size-4" />}
+            >
+              New scan
+            </ButtonLink>
           </>
         }
       />
@@ -281,11 +285,14 @@ export function ProjectDetailPage() {
               Authorised assets assigned to this engagement.
             </p>
           </div>
-          <Link to={listFilterHref('/targets', { project: project.id })}>
-            <Button variant="secondary" size="sm" leadingIcon={<Crosshair className="size-3.5" />}>
-              Open target register
-            </Button>
-          </Link>
+          <ButtonLink
+            to={listFilterHref('/targets', { project: project.id })}
+            variant="secondary"
+            size="sm"
+            leadingIcon={<Crosshair className="size-3.5" />}
+          >
+            Open target register
+          </ButtonLink>
         </div>
 
         {targets.length === 0 ? (
@@ -295,9 +302,9 @@ export function ProjectDetailPage() {
               title="No targets assigned yet"
               description="Add the authorised assets for this engagement to start scanning them."
               action={
-                <Link to="/targets">
-                  <Button variant="primary">Add a target</Button>
-                </Link>
+                <ButtonLink to="/targets" variant="primary">
+                  Add a target
+                </ButtonLink>
               }
             />
           </Card>
@@ -362,9 +369,9 @@ export function ProjectDetailPage() {
               title="No scans for this project yet"
               description="Configure a scan to start collecting findings against the authorised scope."
               action={
-                <Link to="/scans/new">
-                  <Button variant="primary">Configure a scan</Button>
-                </Link>
+                <ButtonLink to="/scans/new" variant="primary">
+                  Configure a scan
+                </ButtonLink>
               }
             />
           </Card>

@@ -122,7 +122,7 @@ export function Dropdown({
               >
                 {item.icon ? <span className="shrink-0">{item.icon}</span> : null}
                 <span className="flex-1 truncate">{item.label}</span>
-                {item.selected ? <Check className="size-3.5 shrink-0 text-accent" /> : null}
+                {item.selected ? <Check className="size-3.5 shrink-0 text-accent-text" /> : null}
               </button>
             ))}
           </div>

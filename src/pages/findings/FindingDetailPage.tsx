@@ -109,7 +109,7 @@ function Overview({ data }: { data: FindingDetailData }) {
           <Detail label="Last detected">{formatRelativeTime(row.lastDetected)}</Detail>
           <Detail label="Scan">
             {scan ? (
-              <Link to={`/scans/${scan.id}`} className="text-accent underline-offset-2 hover:underline">
+              <Link to={`/scans/${scan.id}`} className="text-accent-text underline-offset-2 hover:underline">
                 {scan.id}
               </Link>
             ) : (
@@ -133,7 +133,7 @@ function Overview({ data }: { data: FindingDetailData }) {
                   href={reference.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="truncate font-mono text-xs text-accent underline-offset-2 hover:underline"
+                  className="truncate font-mono text-xs text-accent-text underline-offset-2 hover:underline"
                 >
                   {reference.url}
                 </a>
@@ -191,7 +191,7 @@ function Occurrences({ data }: { data: FindingDetailData }) {
           <li key={occurrence.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2">
             <Link
               to={`/findings/${occurrence.id}`}
-              className="min-w-0 flex-1 truncate font-mono text-xs text-accent underline-offset-2 hover:underline"
+              className="min-w-0 flex-1 truncate font-mono text-xs text-accent-text underline-offset-2 hover:underline"
             >
               {occurrence.httpMethod} {occurrence.endpoint}
             </Link>
@@ -234,7 +234,7 @@ function Verification({ data, actorId }: { data: FindingDetailData; actorId: str
             ? 'This finding is flagged for manual verification but has no task in the queue.'
             : 'The scanner considers this deterministic enough not to need a human.'}
         </p>
-        <Link to="/verification" className="mt-3 inline-block text-[13px] text-accent underline-offset-2 hover:underline">
+        <Link to="/verification" className="mt-3 inline-block text-[13px] text-accent-text underline-offset-2 hover:underline">
           Open the verification queue
         </Link>
       </Card>
@@ -278,7 +278,7 @@ function Verification({ data, actorId }: { data: FindingDetailData; actorId: str
           </p>
           <Link
             to={`/verification/${task.id}`}
-            className="mt-3 inline-block text-[13px] text-accent underline-offset-2 hover:underline"
+            className="mt-3 inline-block text-[13px] text-accent-text underline-offset-2 hover:underline"
           >
             Open the task to reopen or add context
           </Link>
@@ -427,7 +427,7 @@ export function FindingDetailPage() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
             <Detail label="Target" icon={<Radar className="size-3.5" />}>
               {target ? (
-                <Link to={`/targets/${target.id}`} className="text-accent underline-offset-2 hover:underline">
+                <Link to={`/targets/${target.id}`} className="text-accent-text underline-offset-2 hover:underline">
                   {target.name}
                 </Link>
               ) : (
@@ -439,7 +439,7 @@ export function FindingDetailPage() {
             </Detail>
             <Detail label="Scan" icon={<ScanLine className="size-3.5" />}>
               {scan ? (
-                <Link to={`/scans/${scan.id}`} className="text-accent underline-offset-2 hover:underline">
+                <Link to={`/scans/${scan.id}`} className="text-accent-text underline-offset-2 hover:underline">
                   {scan.id}
                 </Link>
               ) : (

@@ -177,7 +177,7 @@ export function ScanDetailPage() {
               {formatRelativeTime(scan.startedAt)}
             </span>
             {live ? (
-              <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent">
+              <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent-text">
                 <span className="relative flex size-1.5">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
@@ -270,7 +270,7 @@ export function ScanDetailPage() {
               The previous completed run on this target was{' '}
               <Link
                 to={`/scans/${data.comparisonScanId}`}
-                className="font-mono font-medium text-accent underline-offset-2 hover:underline"
+                className="font-mono font-medium text-accent-text underline-offset-2 hover:underline"
               >
                 {data.comparisonScanId}
               </Link>
@@ -278,7 +278,7 @@ export function ScanDetailPage() {
             </p>
             <Link
               to={`/scans/compare?previous=${data.comparisonScanId}&current=${scan.id}`}
-              className="inline-flex items-center gap-1.5 rounded-badge border border-accent/40 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-accent hover:bg-accent/16"
+              className="inline-flex items-center gap-1.5 rounded-badge border border-accent/40 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-accent-text hover:bg-accent/16"
             >
               Compare with this run
             </Link>
@@ -315,7 +315,7 @@ export function ScanDetailPage() {
               <DescriptionRow label="Project">
                 <Link
                   to={`/projects/${project.id}`}
-                  className="text-accent underline-offset-2 hover:underline"
+                  className="text-accent-text underline-offset-2 hover:underline"
                 >
                   {project.name}
                 </Link>
@@ -324,7 +324,7 @@ export function ScanDetailPage() {
               <DescriptionRow label="Target">
                 <Link
                   to={`/targets/${target.id}`}
-                  className="text-accent underline-offset-2 hover:underline"
+                  className="text-accent-text underline-offset-2 hover:underline"
                 >
                   {target.name}
                 </Link>
@@ -536,7 +536,7 @@ function RunStat({
         className={cn(
           'mt-1 text-[15px] font-semibold tabular-nums',
           tone === 'warning' && 'text-warning',
-          tone === 'accent' && 'text-accent',
+          tone === 'accent' && 'text-accent-text',
           tone === 'success' && 'text-success',
           tone === 'neutral' && 'text-fg',
         )}

@@ -419,6 +419,10 @@ function StepChoice({
           ? 'border-accent bg-accent-soft'
           : 'border-border-base bg-surface hover:border-border-strong',
         disabled && 'cursor-not-allowed opacity-50 hover:border-border-base',
+        // The radio itself is sr-only, so keyboard focus would otherwise be
+        // clipped to a 1px box with no visible indicator. Mirror the global
+        // :focus-visible treatment onto the card that the label renders.
+        'has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring',
       )}
     >
       <input
@@ -473,7 +477,7 @@ function ProjectStep({
                 </span>
               </span>
               {value === project.id ? (
-                <BadgeCheck className="size-4 shrink-0 text-accent" aria-hidden="true" />
+                <BadgeCheck className="size-4 shrink-0 text-accent-text" aria-hidden="true" />
               ) : null}
             </span>
           </StepChoice>
@@ -611,7 +615,7 @@ function ProfileStep({
                 </span>
               </span>
               {value === profile.id ? (
-                <BadgeCheck className="size-4 shrink-0 text-accent" aria-hidden="true" />
+                <BadgeCheck className="size-4 shrink-0 text-accent-text" aria-hidden="true" />
               ) : null}
             </span>
 
@@ -970,7 +974,7 @@ function ReviewStep({
       {estimate ? (
         <div className="rounded-card border border-accent-border bg-accent-soft p-4">
           <p className="flex items-center gap-2 text-[13px] font-semibold text-fg">
-            <CircleAlert className="size-4 text-accent" aria-hidden="true" />
+            <CircleAlert className="size-4 text-accent-text" aria-hidden="true" />
             What this run will cost
           </p>
           <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">

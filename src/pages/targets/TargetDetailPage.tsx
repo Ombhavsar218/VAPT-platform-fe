@@ -14,6 +14,7 @@ import {
   Tag,
 } from 'lucide-react'
 
+import { Button, ButtonLink } from '@/components/common/Button'
 import { Card, CardHeader } from '@/components/common/Card'
 import { ConfidenceBadge } from '@/components/common/ConfidenceBadge'
 import { DataTable, type Column } from '@/components/common/DataTable'
@@ -115,7 +116,7 @@ export function TargetDetailPage() {
           <div className="min-w-0">
             <Link
               to={`/scans/${scan.id}`}
-              className="font-mono text-[13px] text-fg transition-colors hover:text-accent"
+              className="font-mono text-[13px] text-fg transition-colors hover:text-accent-text"
             >
               {scan.id}
             </Link>
@@ -229,7 +230,7 @@ export function TargetDetailPage() {
           <div className="min-w-0">
             <Link
               to={`/findings/${finding.id}`}
-              className="block truncate text-[13px] font-medium text-fg transition-colors hover:text-accent"
+              className="block truncate text-[13px] font-medium text-fg transition-colors hover:text-accent-text"
             >
               {finding.title}
             </Link>
@@ -297,15 +298,18 @@ export function TargetDetailPage() {
         <PageHeader title="Target" />
         <Card>
           <ErrorState
-            title={notFound ? 'This target does not exists' : 'Could not load the target'}
+            title={notFound ? 'This target does not exist' : 'Could not load the target'}
             message={error instanceof Error ? error.message : 'Unknown error.'}
             onRetry={notFound ? undefined : () => void refetch()}
             retryLabel="Reload"
           />
           {notFound ? (
             <div className="flex justify-center pb-6">
-              <Link to="/targets">
-                <a className="text-[13px] font-medium text-accent hover:underline">Back to targets</a>
+              <Link
+                to="/targets"
+                className="text-[13px] font-medium text-accent-text hover:underline"
+              >
+                Back to targets
               </Link>
             </div>
           ) : null}
@@ -331,7 +335,7 @@ export function TargetDetailPage() {
               href={target.baseUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-mono text-fg-muted transition-colors hover:text-accent"
+              className="inline-flex items-center gap-1.5 font-mono text-fg-muted transition-colors hover:text-accent-text"
             >
               <Globe className="size-3.5 text-fg-subtle" aria-hidden="true" />
               {target.baseUrl}
@@ -342,7 +346,7 @@ export function TargetDetailPage() {
             {target.projectId && target.projectName ? (
               <Link
                 to={`/projects/${target.projectId}`}
-                className="text-fg-muted transition-colors hover:text-accent"
+                className="text-fg-muted transition-colors hover:text-accent-text"
               >
                 {target.projectName}
                 {target.client ? <span className="text-fg-subtle"> · {target.client}</span> : null}
@@ -353,21 +357,18 @@ export function TargetDetailPage() {
           </div>
         }
         actions={
-          <Link to={`/scans/new?target=${target.id}`}>
-            <a
-              className={[
-                'inline-flex h-9 items-center gap-2 rounded-md px-3.5 text-sm font-medium',
-                authorised
-                  ? 'bg-accent text-accent-fg hover:opacity-90'
-                  : 'pointer-events-none cursor-not-allowed bg-surface-3 text-fg-subtle',
-              ].join(' ')}
-              aria-disabled={!authorised}
-              title={authorised ? undefined : 'Record written authorisation before scanning'}
-            >
-              <Radar className="size-4" aria-hidden="true" />
-              New scan
-            </a>
-          </Link>
+          <ButtonLink
+            to={`/scans/new?target=${target.id}`}
+            variant="primary"
+            leadingIcon={<Radar className="size-4" aria-hidden="true" />}
+            aria-disabled={!authorised}
+            title={authorised ? undefined : 'Record written authorisation before scanning'}
+            className={
+              authorised ? undefined : 'pointer-events-none cursor-not-allowed bg-surface-3 text-fg-subtle'
+            }
+          >
+            New scan
+          </ButtonLink>
         }
       />
 
@@ -377,14 +378,14 @@ export function TargetDetailPage() {
           <div className="min-w-0 flex-1">
             <p className="text-[13px] font-semibold text-danger">Written authorisation is missing</p>
             <p className="mt-1 text-[13px] leading-relaxed text-fg-muted">
-              This target cannot be scanned until a client authorisation reference is recorded. Add io
+              This target cannot be scanned until a client authorisation reference is recorded. Add it
               in the Scope tab — no traffic is sent to the host until then.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setTab('scope')}
-            className="text-[13px] font-medium text-accent hover:underline"
+            className="text-[13px] font-medium text-accent-text hover:underline"
           >
             Open scope
           </button>
@@ -411,7 +412,7 @@ export function TargetDetailPage() {
           icon={<ScanLine className="size-4" />}
           caption={
             data.daysSinceScan === null
-              ? 'No scan has been run against this assert.'
+              ? 'No scan has been run against this asset.'
               : `${data.daysSinceScan} day${data.daysSinceScan === 1 ? '' : 's'} ago · ${scans.length} run${scans.length === 1 ? '' : 's'}`
           }
         />
@@ -447,7 +448,7 @@ export function TargetDetailPage() {
             <EmptyState
               size="sm"
               className="mt-4"
-              title="Nothing fingerprinted yes"
+              title="Nothing fingerprinted yet"
               description="Technology detection runs as part of a scan."
             />
           ) : (
@@ -514,19 +515,19 @@ export function TargetDetailPage() {
                 }
                 action={
                   authorised ? (
-                    <Link to={`/scans/new?target=${target.id}`}>
-                      <a className="inline-flex h-9 items-center rounded-md bg-accent px-3.5 text-sm font-medium text-accent-fg">
-                        Configure a scan
-                      </a>
-                    </Link>
+                    <ButtonLink
+                      to={`/scans/new?target=${target.id}`}
+                      variant="primary"
+                    >
+                      Configure a scan
+                    </ButtonLink>
                   ) : (
-                    <button
-                      type="button"
+                    <Button
+                      variant="primary"
                       onClick={() => setTab('scope')}
-                      className="inline-flex h-9 items-center rounded-md bg-accent px-3.5 text-sm font-medium text-accent-fg"
                     >
                       Record authorisation
-                    </button>
+                    </Button>
                   )
                 }
               />
@@ -590,11 +591,11 @@ export function TargetDetailPage() {
               loading={endpointsQuery.isPending}
               skeletonRows={8}
               caption="Endpoints discovered on this target."
-              emptyTitle={endpointQuery ? 'No endpoints match what filter' : 'No endpoints discovered'}
+              emptyTitle={endpointQuery ? 'No endpoints match that filter' : 'No endpoints discovered'}
               emptyDescription={
                 endpointQuery
                   ? 'Try a shorter path fragment.'
-                  : 'Endpoint discovery runs as part of a crawl; no scan has found routes on this target yes.'
+                  : 'Endpoint discovery runs as part of a crawl; no scan has found routes on this target yet.'
               }
               footer={
                 filteredEndpoints.length > 0 ? (
@@ -617,7 +618,7 @@ export function TargetDetailPage() {
               description="The crawler stays inside these boundaries. Changes apply to the next scan."
             />
             <div className="mt-5">
-              {/* Keyed on `updatedAt` so a successful save, which bumps io, removes
+              {/* Keyed on `updatedAt` so a successful save, which bumps it, remounts
                   the editor with a clean draft instead of leaving stale text. */}
               <ScopeEditor
                 key={target.updatedAt}

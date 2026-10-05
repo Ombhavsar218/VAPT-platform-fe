@@ -82,7 +82,7 @@ export function ViewAllLink({ to, children }: { to: string; children: ReactNode 
   return (
     <Link
       to={to}
-      className="text-[13px] font-medium text-accent transition-colors hover:text-accent-hover"
+      className="text-[13px] font-medium text-accent-text transition-colors hover:text-accent-hover"
     >
       {children}
     </Link>

@@ -14,7 +14,7 @@ import { formatElapsed } from '@/utils/format'
 
 const STATE_TONE: Record<ScanStage['state'], string> = {
   done: 'border-success/60 bg-success/15 text-success',
-  active: 'border-accent/60 bg-accent/15 text-accent',
+  active: 'border-accent/60 bg-accent/15 text-accent-text',
   pending: 'border-border-base bg-surface-2 text-fg-subtle',
   skipped: 'border-border-base bg-surface-2 text-fg-subtle',
   failed: 'border-danger/60 bg-danger/15 text-danger',

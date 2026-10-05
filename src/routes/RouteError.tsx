@@ -1,7 +1,7 @@
-import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
+import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 import { AlertOctagon, Home } from 'lucide-react'
 
-import { Button } from '@/components/common/Button'
+import { Button, ButtonLink } from '@/components/common/Button'
 import { Card } from '@/components/common/Card'
 
 interface ErrorDetail {
@@ -64,11 +64,9 @@ export function RouteError() {
           <Button variant="secondary" onClick={() => window.history.back()}>
             Go back
           </Button>
-          <Link to="/dashboard">
-            <Button variant="primary" leadingIcon={<Home className="size-4" />}>
-              Back to dashboard
-            </Button>
-          </Link>
+          <ButtonLink to="/dashboard" variant="primary" leadingIcon={<Home className="size-4" />}>
+            Back to dashboard
+          </ButtonLink>
         </div>
       </Card>
     </div>
